@@ -13,6 +13,7 @@ android {
         versionCode 1
         versionName "1.0"
         // if your minSdkVersion is 21 or higher multidex is enabled by default, and you do not need the multidex library
+        // so no further modification needed
         multiDexEnabled = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
