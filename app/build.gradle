@@ -8,11 +8,12 @@ android {
 
     defaultConfig {
         applicationId "com.gmail.apigeoneer.texttospeech"
-        minSdkVersion 21
+        minSdkVersion 24                                              // not 21 (for the ffmpeg library)
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-
+        // if your minSdkVersion is 21 or higher multidex is enabled by default, and you do not need the multidex library
+        multiDexEnabled = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -44,6 +45,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     // IBM Watson
     implementation 'com.ibm.watson.developer_cloud:android-sdk:0.6.0'
-    // ffmpeg
+    // ffmpeg - to convert audio files to different formats
     implementation 'nl.bravobit:android-ffmpeg:1.1.7'
 }
