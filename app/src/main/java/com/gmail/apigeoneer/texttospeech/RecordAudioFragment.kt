@@ -1,5 +1,6 @@
 package com.gmail.apigeoneer.texttospeech
 
+import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,10 +12,21 @@ import com.gmail.apigeoneer.texttospeech.databinding.FragmentRecordAudioBinding
 import java.io.IOException
 import java.util.*
 
+/**
+ * Ask for run time permissions
+ * Create a MediaRecorder obj & record audio
+ */
 class RecordAudioFragment : Fragment() {
+
+    companion object {
+        private const val REQUEST_RECORD_AUDIO_PERMISSION = 200             // what can go here?
+    }
 
     // data binding
     private lateinit var binding: FragmentRecordAudioBinding
+
+    private val permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO)
+    private var isAudioRecordingPermissionGranted: Boolean = false
 
     private var mediaRecorder = MediaRecorder()
     private var recordedFileName: String = ""
@@ -35,16 +47,39 @@ class RecordAudioFragment : Fragment() {
             }
         }
 
+        // For Activity
+        //ActivityCompat.requestPermissions(MainActivity, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
+        // For fragment
+        requestPermissions(permissions, REQUEST_RECORD_AUDIO_PERMISSION)
+
         return binding.root
     }
 
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        isAudioRecordingPermissionGranted = when (requestCode) {
+            REQUEST_RECORD_AUDIO_PERMISSION ->
+                grantResults[0] == PackageManager.PERMISSION_GRANTED
+            else -> false
+        }
+
+//        if (!isAudioRecordingPermissionGranted) {
+//            finish()
+//        }
+    }
+
     @Throws(IOException::class)
-    private fun startAudioRecording() {
+    fun startAudioRecording() {
         // Use a random UUID
         val uuid = UUID.randomUUID().toString()
 
-        recordedFileName = context?.filesDir?.path + "/" + uuid + ".3gp";
-        convertedFileName = context?.filesDir?.path + "/" + uuid + ".mp3";
+        recordedFileName = requireContext().filesDir.path + "/" + uuid + ".3gp"
+        convertedFileName = requireContext().filesDir.path + "/" + uuid + ".mp3"
 
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)               // record from the device's mic
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
