@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.gmail.apigeoneer.texttospeech.databinding.FragmentRecordAudioBinding
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.*
 
@@ -31,6 +32,7 @@ class RecordAudioFragment : Fragment() {
     private var mediaRecorder = MediaRecorder()
     private var recordedFileName: String = ""
     private var convertedFileName: String = ""
+    private var isRecording: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,10 +42,24 @@ class RecordAudioFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_record_audio, container, false)
 
         binding.toggleBtn.setOnClickListener {
-            try {
-                startAudioRecording()
-            } catch (e: IOException) {
-                e.printStackTrace()
+            if (!isRecording) {
+                if (isAudioRecordingPermissionGranted) {
+                    try {
+                        startAudioRecording()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                }
+            } else {
+                // if recording, schedule a thread to convert the speech being recorded into text
+                val thread = Thread(Runnable {
+                    try {
+                        convertSpeech()
+                    } catch (e: FileNotFoundException) {
+                        e.printStackTrace()
+                    }
+                })
+                thread.start()
             }
         }
 
@@ -87,6 +103,10 @@ class RecordAudioFragment : Fragment() {
         mediaRecorder.setOutputFile(recordedFileName)
         mediaRecorder.prepare()
         mediaRecorder.start()
+    }
+
+    private fun convertSpeech() {
+        TODO("Not yet implemented")
     }
 
 }
