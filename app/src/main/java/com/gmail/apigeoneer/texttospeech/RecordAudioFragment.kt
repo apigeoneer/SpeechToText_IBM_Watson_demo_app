@@ -1,14 +1,21 @@
 package com.gmail.apigeoneer.texttospeech
 
+import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.media.MediaRecorder
+import android.media.audiofx.DynamicsProcessing
+import android.os.AsyncTask.execute
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.gmail.apigeoneer.texttospeech.RecordAudioFragment.Companion.TAG
 import com.gmail.apigeoneer.texttospeech.databinding.FragmentRecordAudioBinding
+import nl.bravobit.ffmpeg.FFmpeg
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.*
@@ -20,6 +27,7 @@ import java.util.*
 class RecordAudioFragment : Fragment() {
 
     companion object {
+        private const val TAG = "RecordAudioFragment"
         private const val REQUEST_RECORD_AUDIO_PERMISSION = 200             // what can go here?
     }
 
@@ -105,7 +113,30 @@ class RecordAudioFragment : Fragment() {
         mediaRecorder.start()
     }
 
+    @Throws(FileNotFoundException::class)
     private fun convertSpeech() {
+        toggleRecording()
+
+        mediaRecorder.stop()
+        mediaRecorder.reset()
+        mediaRecorder.release()
+
+        val ffmpeg = FFmpeg.getInstance(context?.applicationContext)
+
+//        val rc = FFmpeg.execute(String
+//                .format("-i %s -c:a libmp3lame %s", recordedFileName, convertedFileName))
+//
+//        when (rc) {
+//            RETURN_CODE_SUCCESS -> Log.i(Config.TAG, "Command execution completed successfully")
+//            RETURN_CODE_CANCEL -> Log.i(Config.TAG, "Command execution cancelled by the user")
+//            else -> {
+//                Log.i(DynamicsProcessing.Config.TAG, "Command execution completed successfully"
+//                Config.printLastCommandOutput(Log.INFO))
+//            }
+//        }
+    }
+
+    private fun toggleRecording() {
         TODO("Not yet implemented")
     }
 
